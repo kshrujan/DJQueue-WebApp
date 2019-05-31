@@ -1,0 +1,19 @@
+.card {
+    width: 90%;
+    height: 154px;
+    background-color: #fff;
+    margin: 0px auto;
+    box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+    display: flex;
+    margin-top: 10px;
+}
+.card:hover {
+    transition: 0.5s;
+    box-shadow: 0px 5px 10px rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
+.image {
+    width: 200px;
+    height: 100%;
+}
