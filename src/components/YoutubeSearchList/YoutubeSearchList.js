@@ -19,7 +19,8 @@ class YoutubeSearchList extends Component {
                 title: title,
                 url: url,
                 count: 0,
-                image: image
+                image: image,
+                addedAt: (new Date().getTime())
             };
     
             //make a post call to our backend to store the song data

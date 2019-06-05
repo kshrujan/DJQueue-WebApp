@@ -1,7 +1,7 @@
 .nowplaying {
-    width: 60%;
+    width: 100%;
     margin: 0px auto;
-    height: 30%;
+    height: 45%;
     border-radius: 10px;
     background-color: #323232;
     box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
@@ -23,4 +23,46 @@
 .header {
     color: #fff;
     display: block;
+}
+.nowPlayingSongContainer{
+    display:flex;
+    flex-direction:column;
+    /*background-color: #ff0000;*/
+    margin-left:10px;
+    margin-right:10px;
+    flex-grow:1;
+    /*min-height:100%;*/
+    overflow:hidden;
+    max-width:30%;
+    max-height:100%;
+
+}
+.nowPlayingHeader {
+    color:#fff;
+    margin-top:0;
+    margin-bottom:0;
+}
+.nowPlayingSubHeader {
+    color:#fff;
+    margin-top:0;
+    white-space: nowrap;
+    /*overflow: hidden;*/
+    text-overflow: ellipsis;
+    margin-bottom:5px;
+}
+.nowPlayingImageContainer{
+    flex-grow:1;
+    
+    
+
+
+
+}
+.nowPlayingImage{
+    max-height:100%;
+    width:100%;
+    height:100%;
+    /*width: auto;
+    background-color:white;*/
+
 }

@@ -6,6 +6,14 @@ import Loading from '../../components/UI/Loading/Loading';
 import Layout from '../../hoc/Layout/Layout';
 import NowPlaying from '../NowPlaying/NowPlaying';
 
+function sortPlaylist(a, b) {
+    var diffVotes = b.count - a.count;
+    if (diffVotes !== 0) {
+        return diffVotes;
+    }
+
+    return a.addedAt - b.addedAt;
+}
 
 class PlaylistContainer extends Component {
 
@@ -16,31 +24,41 @@ class PlaylistContainer extends Component {
 
 
     componentDidMount = () => {
+        let self = this;
         this.setState({
             ...this.state,
             isLoading: true
-        }, () => {
-            //make a call to retrieve the current playlist
-            axios.get('https://djqueue.firebaseio.com/playlist.json')
-            .then(response => {
-                //loop through and place data in an array
-                let data = [];
-                
-                for(let key in response.data) {
-                    data.push({
-                        ...response.data[key]
-                    })
-                }
-                //now set the state for the data
-                this.setState({
-                    ...this.state,
-                    playlist: data,
-                    isLoading: false
+        }, ()=>{self.updateFromFirebase()})
+        setInterval(()=>{this.updateFromFirebase()},2000)
+    }
+
+    updateFromFirebase = () => {
+        //make a call to retrieve the current playlist
+        axios.get('https://djqueue.firebaseio.com/.json')
+        .then(response => {
+            
+            //loop through and place data in an array
+            let data = [];
+            // console.log(response.data)
+            
+            for(let key in response.data.playlist) {
+                data.push({
+                    ...response.data.playlist[key]
                 })
+            }
+            data.sort(sortPlaylist);
+            //now set the state for the data
+            this.setState({
+                ...this.state,
+                playlist: data,
+                nowPlaying: response.data.nowplaying,
+                lastPlayed: response.data.lastPlayed,
+                upNext: response.data.upNext,
+                isLoading: false
             })
-            .catch(error => {
-                console.log(error);
-            })
+        })
+        .catch(error => {
+            console.log(error);
         })
     }
 
@@ -79,11 +97,11 @@ class PlaylistContainer extends Component {
                return <PlaylistCard title={data.title} key={index} clicked={() => this.onClickHandler(index)} count={data.count}/>
             })
         }
-        console.log(this.state.playlist);
+        // console.log(this.state.playlist);
 
         return(
             <Layout>
-                <NowPlaying current={this.state.playlist.length > 0 ? this.state.playlist[0] : null}/>
+                <NowPlaying nowPlaying={this.state.nowPlaying} lastPlayed={this.state.lastPlayed} upNext={this.state.upNext}/>
                 <div className={styles.playlistContainer}>
                     <h1 className={styles.header}>Current Playlist</h1>
                     {playlist}
