@@ -7,16 +7,21 @@ import {Route, Switch} from 'react-router-dom';
 class MainContainer extends Component {
     state = {
         songs: [],
+        
     };
+
+    
 
     render() {
 
         return(
             <div className={styles.mainContainer}>
-                <Switch>
-                    <Route path="/select" component={SearchContainer}/>
-                    <Route path="/" component={PlaylistContainer}/>
-                </Switch>
+                    
+                    <SearchContainer visible={this.props.visible === 'search'}/>
+
+
+                    <PlaylistContainer visible={this.props.visible === 'playlist'}/>
+                
             </div>
         )
     }

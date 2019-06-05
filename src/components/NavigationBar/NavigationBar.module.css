@@ -14,6 +14,10 @@
     margin: 0px;
 }
 
+.navButton{
+    cursor:pointer;
+}
+
 nav ul {
     list-style: none;
     display: flex;

@@ -25,7 +25,8 @@ class PlaylistContainer extends Component {
             playlist: [],
             isLoading: false,
             nowPlaying:{},
-            upNext: {}
+            upNext: {},
+            prevPlayed: {}
         };
     }
 
@@ -66,7 +67,7 @@ class PlaylistContainer extends Component {
     componentWillMount = () => {
         let prevNowPlaying = this.state.nowPlaying;
         let prevUpNext = this.state.upNext;
-
+        let prevPrevPlayed = this.state.prevPlayed;
         //setup listener
         this.database.child('nowplaying').on('value', (snapshot, index) => {
             if(snapshot.val() !== null) {
@@ -97,6 +98,24 @@ class PlaylistContainer extends Component {
                 })
             }
         });
+        this.database.child('prevPlayed').on('value', (snapshot, index) => {
+            if(snapshot.val() !== null) {
+                prevPrevPlayed = {
+                    title: snapshot.val().title,
+                    image: snapshot.val().image
+                }
+                
+                //setState
+                this.setState({
+                    ...this.state,
+                    prevPlayed: prevPrevPlayed
+                })
+            }
+        });
+        //this.database.child('played/').on('child_added')
+
+
+
     }
 
     onClickHandler = (key) => {
@@ -135,6 +154,12 @@ class PlaylistContainer extends Component {
       }
 
     render() {
+
+        let visibleStyle = {}
+        if(!this.props.visible){
+            visibleStyle.display = 'none';
+        }
+
         let playlist = this.state.isLoading ? <Loading /> : null;
         if(this.state.playlist.length > 0) {
             playlist = this.state.playlist.map((data, index) => {
@@ -143,6 +168,7 @@ class PlaylistContainer extends Component {
         }
 
         return(
+            <div style={visibleStyle}>
             <Layout>
                 <NowPlaying nowPlaying={this.state.nowPlaying} lastPlayed={this.state.lastPlayed} upNext={this.state.upNext}/>
                 <div className={styles.playlistContainer}>
@@ -150,6 +176,7 @@ class PlaylistContainer extends Component {
                     {playlist}
                 </div>
             </Layout>
+            </div>
         );
     }
 }

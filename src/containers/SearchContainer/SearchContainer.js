@@ -60,16 +60,20 @@ class SearchContainer extends Component {
     }
 
     render() {
-
-
+        let visibleStyle = {}
+        if(!this.props.visible){
+            visibleStyle.display = 'none';
+        }
         return (
-            <>
+            
+            <div style={visibleStyle}>
                 <h1 className={styles.title}>Search</h1>
                 <div className={styles.searchBoxContainer}>
                     <input type="text" className={styles.search} placeholder={"Search..."} onKeyDown={(event) => this.onEnter(event)}/>
                 </div>
                 <YoutubeSearchList data={this.state.youtubeResults} loading={this.state.isLoadingYoutubeResults} clearSearch={this.clearSearch}/>
-            </>
+            </div>
+            
         )
     }
 
