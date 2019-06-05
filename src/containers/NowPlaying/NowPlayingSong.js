@@ -21,8 +21,9 @@ class NowPlayingSong extends Component {
             <h3 className={styles.nowPlayingHeader}>{title}</h3>
             
             <div className={styles.nowPlayingImageContainer}>
+            <div className={styles.nowPlayingImageCropContainer}>
             {image}
-            
+            </div>
             </div>
             <h5 className={styles.nowPlayingSubHeader}>{subHeaderTitle}</h5>
            
