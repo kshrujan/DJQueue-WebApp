@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import SearchCard from './YoutubeSearchCard/YoutubeSearchCard';
 import Loading from '../../components/UI/Loading/Loading';
-import axios from 'axios';
 import {withRouter} from 'react-router-dom';
 import * as firebase from 'firebase';
 import 'firebase/database';
@@ -20,7 +19,8 @@ class YoutubeSearchList extends Component {
             title: title,
             url: url,
             count: 0,
-            image: image
+            image: image,
+            addedAt: (new Date().getTime())
         }, () => {
             this.props.history.push("/");
         })

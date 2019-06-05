@@ -7,17 +7,25 @@ import Layout from '../../hoc/Layout/Layout';
 import NowPlaying from '../NowPlaying/NowPlaying';
 import * as firebase from 'firebase';
 
+// function sortPlaylist(a, b) {
+//     var diffVotes = b.count - a.count;
+//     if (diffVotes !== 0) {
+//         return diffVotes;
+//     }
+
+//     return a.addedAt - b.addedAt;
+// }
 
 class PlaylistContainer extends Component {
 
     constructor(props) {
         super(props);
-        this.database = firebase.database().ref().child('nowplaying');
+        this.database = firebase.database().ref();
         this.state = {
             playlist: [],
             isLoading: false,
             nowPlaying:{},
-            keys: []
+            upNext: {}
         };
     }
 
@@ -28,11 +36,16 @@ class PlaylistContainer extends Component {
             isLoading: true
         }, () => {
             //make a call to retrieve the current playlist
-            axios.get('https://djqueue.firebaseio.com/playlist.json')
+            axios.get('https://djqueue.firebaseio.com/.json')
             .then(response => {
+                let data = [];
                 //loop through and place data in an array
-                let data = Object.values(response.data);
-                let keys = Object.keys(response.data);
+                for(let key in response.data.playlist) {
+                    data.push({
+                        key: key,
+                        detail: response.data.playlist[key]
+                    })
+                }
 
                 //sort playlist
                 let sortedData = data.sort(this.compare);
@@ -41,8 +54,7 @@ class PlaylistContainer extends Component {
                 this.setState({
                     ...this.state,
                     playlist: sortedData,
-                    isLoading: false,
-                    keys: keys
+                    isLoading: false
                 })
             })
             .catch(error => {
@@ -53,30 +65,47 @@ class PlaylistContainer extends Component {
 
     componentWillMount = () => {
         let prevNowPlaying = this.state.nowPlaying;
+        let prevUpNext = this.state.upNext;
 
         //setup listener
-        this.database.on('value', (snapshot, index) => {
+        this.database.child('nowplaying').on('value', (snapshot, index) => {
             if(snapshot.val() !== null) {
                 prevNowPlaying = {
-                title: snapshot.val().title,
-                image: snapshot.val().image
+                    title: snapshot.val().title,
+                    image: snapshot.val().image
+                }
+                
+                //setState
+                this.setState({
+                    ...this.state,
+                    nowPlaying: prevNowPlaying
+                })
             }
-            
-            //setState
-            this.setState({
-                ...this.state,
-                nowPlaying: prevNowPlaying
-            })
+        });
+
+        this.database.child('upNext').on('value', (snapshot, index) => {
+            if(snapshot.val() !== null) {
+                prevUpNext = {
+                    title: snapshot.val().title,
+                    image: snapshot.val().image
+                }
+                
+                //setState
+                this.setState({
+                    ...this.state,
+                    upNext: prevUpNext
+                })
             }
         });
     }
 
-    onClickHandler = (index) => {
+    onClickHandler = (key) => {
         //update the state and the json
         let clonedPlaylist = [...this.state.playlist];
 
-        //update the count for song at index
-        clonedPlaylist[index].count += 1;
+        //update the count for song at key
+        let songToUpdate = clonedPlaylist.find(x => x.key === key);
+        songToUpdate.detail.count += 1;
 
         //order
         let updatedPlaylist = clonedPlaylist.sort(this.compare);
@@ -85,23 +114,20 @@ class PlaylistContainer extends Component {
         this.setState({
             ...this.state,
             playlist: updatedPlaylist
-        }, (newIndex = index) => {
+        }, (newKey = key) => {
             //make a firebase update to the specific record
-
-            //get the key for firebase
-            let key  = this.state.keys[newIndex];
-            console.log("index: ", key);
+            let countFrom = this.state.playlist.find(x => x.key === newKey);
             //setup update
-            firebase.database().ref().child('/playlist/'+key)
-                    .update({count: this.state.playlist[newIndex].count});
+            firebase.database().ref().child('/playlist/'+newKey)
+                    .update({count: countFrom.detail.count});
         })
     }
 
     compare = (a, b) => {
-        if (a.count < b.count) {
+        if (a.detail.count < b.detail.count) {
           return 1;
         }
-        if (a.count > b.count) {
+        if (a.detail.count > b.detail.count) {
           return -1;
         }
         // a must be equal to b
@@ -112,13 +138,13 @@ class PlaylistContainer extends Component {
         let playlist = this.state.isLoading ? <Loading /> : null;
         if(this.state.playlist.length > 0) {
             playlist = this.state.playlist.map((data, index) => {
-               return <PlaylistCard title={data.title} key={index} clicked={() => this.onClickHandler(index)} count={data.count}/>
+               return <PlaylistCard title={data.detail.title} key={index} clicked={() => this.onClickHandler(data.key)} count={data.detail.count}/>
             })
         }
 
         return(
             <Layout>
-                <NowPlaying current={Object.entries(this.state.nowPlaying).length > 0 ? this.state.nowPlaying : null}/>
+                <NowPlaying nowPlaying={this.state.nowPlaying} lastPlayed={this.state.lastPlayed} upNext={this.state.upNext}/>
                 <div className={styles.playlistContainer}>
                     <h1 className={styles.header}>Current Playlist</h1>
                     {playlist}
