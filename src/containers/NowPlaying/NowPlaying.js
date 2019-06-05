@@ -5,16 +5,17 @@ class NowPlaying extends Component {
 
 
     render() {
-        
-        let current = this.props.current ? this.props.current : null;
         return(
             <>
-                <div className={styles.nowplaying}>
-                <h1 className={styles.header}>Now Playing</h1>
-                    <div className={styles.imageContainer}>
-                        {this.props.current ? (
-                            <img src={this.props.current.image} className={styles.image}/>
-                        ) : null}
+                <div className={styles.nowplayingOuter}>
+                    <h1 className={styles.header}>Now Playing</h1>
+                    <div className={styles.nowplaying}>
+                            {this.props.current ? (
+                                <img src={this.props.current.image} className={styles.image}/>
+                            ) : null}
+                            {this.props.current ? (
+                                <h3 className={styles.title}>{this.props.current.title}</h3>
+                            ): null}
                     </div>
                 </div>
             </>

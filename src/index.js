@@ -4,6 +4,10 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter} from 'react-router-dom';
+import * as firebase from 'firebase';
+import {firebaseConfig} from './config/config';
+
+firebase.initializeApp(firebaseConfig);
 
 const app = (
     <BrowserRouter>

@@ -5,14 +5,21 @@ import axios from 'axios';
 import Loading from '../../components/UI/Loading/Loading';
 import Layout from '../../hoc/Layout/Layout';
 import NowPlaying from '../NowPlaying/NowPlaying';
+import * as firebase from 'firebase';
 
 
 class PlaylistContainer extends Component {
 
-    state = {
-        playlist: [],
-        isLoading: false
-    };
+    constructor(props) {
+        super(props);
+        this.database = firebase.database().ref().child('nowplaying');
+        this.state = {
+            playlist: [],
+            isLoading: false,
+            nowPlaying:{},
+            keys: []
+        };
+    }
 
 
     componentDidMount = () => {
@@ -24,24 +31,44 @@ class PlaylistContainer extends Component {
             axios.get('https://djqueue.firebaseio.com/playlist.json')
             .then(response => {
                 //loop through and place data in an array
-                let data = [];
-                
-                for(let key in response.data) {
-                    data.push({
-                        ...response.data[key]
-                    })
-                }
+                let data = Object.values(response.data);
+                let keys = Object.keys(response.data);
+
+                //sort playlist
+                let sortedData = data.sort(this.compare);
+
                 //now set the state for the data
                 this.setState({
                     ...this.state,
-                    playlist: data,
-                    isLoading: false
+                    playlist: sortedData,
+                    isLoading: false,
+                    keys: keys
                 })
             })
             .catch(error => {
                 console.log(error);
             })
         })
+    }
+
+    componentWillMount = () => {
+        let prevNowPlaying = this.state.nowPlaying;
+
+        //setup listener
+        this.database.on('value', (snapshot, index) => {
+            if(snapshot.val() !== null) {
+                prevNowPlaying = {
+                title: snapshot.val().title,
+                image: snapshot.val().image
+            }
+            
+            //setState
+            this.setState({
+                ...this.state,
+                nowPlaying: prevNowPlaying
+            })
+            }
+        });
     }
 
     onClickHandler = (index) => {
@@ -58,6 +85,15 @@ class PlaylistContainer extends Component {
         this.setState({
             ...this.state,
             playlist: updatedPlaylist
+        }, (newIndex = index) => {
+            //make a firebase update to the specific record
+
+            //get the key for firebase
+            let key  = this.state.keys[newIndex];
+            console.log("index: ", key);
+            //setup update
+            firebase.database().ref().child('/playlist/'+key)
+                    .update({count: this.state.playlist[newIndex].count});
         })
     }
 
@@ -79,11 +115,10 @@ class PlaylistContainer extends Component {
                return <PlaylistCard title={data.title} key={index} clicked={() => this.onClickHandler(index)} count={data.count}/>
             })
         }
-        console.log(this.state.playlist);
 
         return(
             <Layout>
-                <NowPlaying current={this.state.playlist.length > 0 ? this.state.playlist[0] : null}/>
+                <NowPlaying current={Object.entries(this.state.nowPlaying).length > 0 ? this.state.nowPlaying : null}/>
                 <div className={styles.playlistContainer}>
                     <h1 className={styles.header}>Current Playlist</h1>
                     {playlist}

@@ -1,26 +1,30 @@
 .nowplaying {
+    display: flex;
+    padding: 10px;
+}
+
+.nowplayingOuter {
     width: 60%;
     margin: 0px auto;
-    height: 30%;
     border-radius: 10px;
     background-color: #323232;
     box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
-    display: flex;
-    justify-content: space-between;
 }
 
-.imageContainer {
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-}
 .image {
     border-radius: 10px;
     width: 40%;
     height: 80%;
+    margin-left: 10px; 
 }
 
 .header {
     color: #fff;
     display: block;
+}
+
+.title {
+    color: #FFF;
+    margin-left: 10px;
+    border-left: 2px solid #5a5a5a;
 }

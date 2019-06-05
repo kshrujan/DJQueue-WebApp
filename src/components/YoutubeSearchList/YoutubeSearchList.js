@@ -3,40 +3,57 @@ import SearchCard from './YoutubeSearchCard/YoutubeSearchCard';
 import Loading from '../../components/UI/Loading/Loading';
 import axios from 'axios';
 import {withRouter} from 'react-router-dom';
+import * as firebase from 'firebase';
+import 'firebase/database';
 
 class YoutubeSearchList extends Component {
-
-    state = {
-        loading: false
+    constructor(props) {
+        super(props);
+        this.database = firebase.database().ref().child('playlist');
+        this.state = {
+            loading: false
+        }
     }
 
     onClickHandler = (title, url, image) => {
-        this.setState({
-            ...this.state,
-            loading: true
+        this.database.push().set({
+            title: title,
+            url: url,
+            count: 0,
+            image: image
         }, () => {
-            let obj = {
-                title: title,
-                url: url,
-                count: 0,
-                image: image
-            };
-    
-            //make a post call to our backend to store the song data
-            axios.post('https://djqueue.firebaseio.com/playlist.json', obj)
-                 .then(response => {
-                     this.props.clearSearch();
-                     this.setState({
-                         ...this.state,
-                         loading: false
-                     }, () => {
-                         this.props.history.push("/");
-                     })
-                 })
-                 .catch(error => {
-                     console.log(error);
-                 })
+            this.props.history.push("/");
         })
+        // this.setState({
+        //     ...this.state,
+        //     loading: true
+        // }, () => {
+        //     let obj = {
+        //         title: title,
+        //         url: url,
+        //         count: 0,
+        //         image: image
+        //     };
+    
+        //     //make a post call to our backend to store the song data
+        //     axios.post('https://djqueue.firebaseio.com/playlist.json', obj)
+        //          .then(response => {
+        //              this.props.clearSearch();
+        //              this.setState({
+        //                  ...this.state,
+        //                  loading: false
+        //              }, () => {
+        //                  this.props.history.push("/");
+        //              })
+        //          })
+        //          .catch(error => {
+        //              console.log(error);
+        //          })
+        // })
+    }
+
+    componentWillUnmount = () => {
+        this.database.off('value');
     }
     
     render() {
@@ -46,7 +63,7 @@ class YoutubeSearchList extends Component {
             //loop through the data and return to cards
             cards = this.props.data.map((result, index) => {
                 let snippet = result.snippet;
-                return <SearchCard key={index} image={snippet.thumbnails.high.url} title={snippet.title} summary={snippet.description} url={result.id.videoId} onClick={this.onClickHandler} image={snippet.thumbnails.high.url}/>
+                return <SearchCard key={index} image={snippet.thumbnails.high.url} title={snippet.title} summary={snippet.description} url={result.id.videoId} onClick={this.onClickHandler}/>
             });
         }
         return(
