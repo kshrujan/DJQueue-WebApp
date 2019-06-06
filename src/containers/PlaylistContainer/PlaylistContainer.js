@@ -24,20 +24,14 @@ class PlaylistContainer extends Component {
         this.state = {
             playlist: [],
             isLoading: false,
-            nowPlaying:{},
-            upNext: {},
-            prevPlayed: {}
+            nowPlaying:null,
+            upNext: null,
+            prevPlayed: null
         };
     }
-
-
-    componentDidMount = () => {
-        this.setState({
-            ...this.state,
-            isLoading: true
-        }, () => {
-            //make a call to retrieve the current playlist
-            axios.get('https://djqueue.firebaseio.com/.json')
+    
+    updatePlaylist = () => {
+        axios.get('https://djqueue.firebaseio.com/.json')
             .then(response => {
                 let data = [];
                 //loop through and place data in an array
@@ -61,6 +55,15 @@ class PlaylistContainer extends Component {
             .catch(error => {
                 console.log(error);
             })
+    }
+
+    componentDidMount = () => {
+        this.setState({
+            ...this.state,
+            isLoading: true
+        }, () => {
+            //make a call to retrieve the current playlist
+            this.updatePlaylist();
         })
     }
 
@@ -85,6 +88,7 @@ class PlaylistContainer extends Component {
         });
 
         this.database.child('upNext').on('value', (snapshot, index) => {
+            
             if(snapshot.val() !== null) {
                 prevUpNext = {
                     title: snapshot.val().title,
@@ -112,7 +116,20 @@ class PlaylistContainer extends Component {
                 })
             }
         });
-        //this.database.child('played/').on('child_added')
+        let playlistRef = this.database.child('playlist/');
+        playlistRef.on('child_added', (data) => {
+            console.log("PLAYLIST UPDATE")
+            this.updatePlaylist();
+
+        })
+        playlistRef.on('child_changed', (data)=> {
+            console.log("PLAYLIST UPDATE")
+            this.updatePlaylist();
+        })
+        playlistRef.on('child_removed',(data)=> {
+            console.log("PLAYLIST UPDATE")
+            this.updatePlaylist();
+        })
 
 
 
@@ -170,7 +187,7 @@ class PlaylistContainer extends Component {
         return(
             <div style={visibleStyle}>
             <Layout>
-                <NowPlaying nowPlaying={this.state.nowPlaying} lastPlayed={this.state.lastPlayed} upNext={this.state.upNext}/>
+                <NowPlaying nowPlaying={this.state.nowPlaying} lastPlayed={this.state.lastPlayed} upNext={this.state.upNext} prevPlayed={this.state.prevPlayed}/>
                 <div className={styles.playlistContainer}>
                     <h1 className={styles.header}>Current Playlist</h1>
                     {playlist}
