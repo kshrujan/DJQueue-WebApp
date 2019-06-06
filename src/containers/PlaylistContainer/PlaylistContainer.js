@@ -29,17 +29,23 @@ class PlaylistContainer extends Component {
             prevPlayed: null
         };
     }
-    
+    //TODO: make it handle null playlist values
     updatePlaylist = () => {
         axios.get('https://djqueue.firebaseio.com/.json')
             .then(response => {
                 let data = [];
-                //loop through and place data in an array
-                for(let key in response.data.playlist) {
-                    data.push({
-                        key: key,
-                        detail: response.data.playlist[key]
-                    })
+                if(response.data !== null) {
+                    if(response.data.playlist !== undefined){
+                
+                        //loop through and place data in an array
+                        for(let key in response.data.playlist) {
+                            data.push({
+                                key: key,
+                                detail: response.data.playlist[key]
+                            })
+                        }
+                    }
+
                 }
 
                 //sort playlist
