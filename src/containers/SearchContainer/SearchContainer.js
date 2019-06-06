@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import YoutubeSearchList from '../../components/YoutubeSearchList/YoutubeSearchList';
 import styles from './SearchContainer.module.css';
-
+import {key} from '../../config/config';
 class SearchContainer extends Component {
 
     state = {
@@ -22,7 +22,7 @@ class SearchContainer extends Component {
                 isLoadingYoutubeResults: true
             }, () => {
                 //make the API call once enter is clicked
-            axios.get('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q='+query+'&type=video&key=AIzaSyAzs0kIuYjj2P-0VhIzSOQQ4TmKeE7s4sY')
+            axios.get('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q='+query+'&type=video&key=' + key)
                  .then(response => {
                      //check to see if the data exsits
                     if(response.data) {
