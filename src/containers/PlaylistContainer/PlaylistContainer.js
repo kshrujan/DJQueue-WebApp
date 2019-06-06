@@ -78,43 +78,63 @@ class PlaylistContainer extends Component {
                     title: snapshot.val().title,
                     image: snapshot.val().image
                 }
-                
-                //setState
                 this.setState({
                     ...this.state,
                     nowPlaying: prevNowPlaying
                 })
             }
+            else{
+                //setState
+                
+                this.setState({
+                    ...this.state,
+                    nowPlaying: null
+                })
+            }
+            
         });
 
         this.database.child('upNext').on('value', (snapshot, index) => {
-            
             if(snapshot.val() !== null) {
                 prevUpNext = {
                     title: snapshot.val().title,
                     image: snapshot.val().image
                 }
-                
-                //setState
                 this.setState({
                     ...this.state,
                     upNext: prevUpNext
                 })
-            }
+            }   
+            else{
+                this.setState({
+                    ...this.state,
+                    upNext: null
+                })
+            } 
+                //setState
+            
+            
         });
-        this.database.child('prevPlayed').on('value', (snapshot, index) => {
+        this.database.child('lastPlayed').on('value', (snapshot, index) => {
             if(snapshot.val() !== null) {
                 prevPrevPlayed = {
                     title: snapshot.val().title,
                     image: snapshot.val().image
                 }
-                
-                //setState
                 this.setState({
                     ...this.state,
                     prevPlayed: prevPrevPlayed
                 })
+            }   
+            else{
+                this.setState({
+                    ...this.state,
+                    prevPlayed: null
+                })
+                //setState
             }
+            
+            
         });
         let playlistRef = this.database.child('playlist/');
         playlistRef.on('child_added', (data) => {
@@ -187,7 +207,7 @@ class PlaylistContainer extends Component {
         return(
             <div style={visibleStyle}>
             <Layout>
-                <NowPlaying nowPlaying={this.state.nowPlaying} lastPlayed={this.state.lastPlayed} upNext={this.state.upNext} prevPlayed={this.state.prevPlayed}/>
+                <NowPlaying nowPlaying={this.state.nowPlaying} lastPlayed={this.state.prevPlayed} upNext={this.state.upNext} />
                 <div className={styles.playlistContainer}>
                     <h1 className={styles.header}>Current Playlist</h1>
                     {playlist}
