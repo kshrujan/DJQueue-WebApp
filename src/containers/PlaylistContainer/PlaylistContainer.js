@@ -118,16 +118,16 @@ class PlaylistContainer extends Component {
         });
         let playlistRef = this.database.child('playlist/');
         playlistRef.on('child_added', (data) => {
-            console.log("PLAYLIST UPDATE")
+            
             this.updatePlaylist();
 
         })
         playlistRef.on('child_changed', (data)=> {
-            console.log("PLAYLIST UPDATE")
+            
             this.updatePlaylist();
         })
         playlistRef.on('child_removed',(data)=> {
-            console.log("PLAYLIST UPDATE")
+            
             this.updatePlaylist();
         })
 

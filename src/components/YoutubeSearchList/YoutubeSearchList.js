@@ -22,7 +22,7 @@ class YoutubeSearchList extends Component {
             image: image,
             addedAt: (new Date().getTime())
         }, () => {
-            this.props.history.push("/");
+            this.props.navHome();
         })
         // this.setState({
         //     ...this.state,

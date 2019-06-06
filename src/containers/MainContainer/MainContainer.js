@@ -17,7 +17,7 @@ class MainContainer extends Component {
         return(
             <div className={styles.mainContainer}>
                     
-                    <SearchContainer visible={this.props.visible === 'search'}/>
+                    <SearchContainer navHome={this.props.navHome} visible={this.props.visible === 'search'}/>
 
 
                     <PlaylistContainer visible={this.props.visible === 'playlist'}/>

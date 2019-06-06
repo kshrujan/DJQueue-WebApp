@@ -27,7 +27,7 @@ class App extends Component {
 		return (
 	    <Layout>
 	        <NavBar navHome={()=>{this.setVisible('playlist')}} navSearch={()=>{this.setVisible('search')}}/>
-	        <MainContainer visible={this.state.visible}/>
+	        <MainContainer navHome={()=>{this.setVisible('playlist')}} visible={this.state.visible}/>
 	    </Layout> 
 	  );
 	}

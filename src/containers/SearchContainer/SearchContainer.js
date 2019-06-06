@@ -22,7 +22,7 @@ class SearchContainer extends Component {
                 isLoadingYoutubeResults: true
             }, () => {
                 //make the API call once enter is clicked
-            axios.get('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q='+query+'&type=video&key=')
+            axios.get('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q='+query+'&type=video&key=AIzaSyAzs0kIuYjj2P-0VhIzSOQQ4TmKeE7s4sY')
                  .then(response => {
                      //check to see if the data exsits
                     if(response.data) {
@@ -71,7 +71,7 @@ class SearchContainer extends Component {
                 <div className={styles.searchBoxContainer}>
                     <input type="text" className={styles.search} placeholder={"Search..."} onKeyDown={(event) => this.onEnter(event)}/>
                 </div>
-                <YoutubeSearchList data={this.state.youtubeResults} loading={this.state.isLoadingYoutubeResults} clearSearch={this.clearSearch}/>
+                <YoutubeSearchList navHome={this.props.navHome} data={this.state.youtubeResults} loading={this.state.isLoadingYoutubeResults} clearSearch={this.clearSearch}/>
             </div>
             
         )
