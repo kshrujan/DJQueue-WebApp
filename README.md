@@ -1,3 +1,34 @@
+# DJQueue-WebApp
+
+## The frontend interface for DJQueue
+## Sibling repos
+- [DJQueueServer](https://github.com/jacksonjw12/DJQueueServer)
+- [DJQueueESP32](https://github.com/jacksonjw12/DJQueueESP32)
+
+### To configure, you must create a src/config/config.js file of the form
+<pre>
+//the firebase api config
+export const firebaseConfig = {
+    apiKey: "blah",
+    authDomain: "blah.firebaseapp.com",
+    databaseURL: "https://blah.firebaseio.com",
+    projectId: "blah",
+    storageBucket: "blah.appspot.com",
+    messagingSenderId: "",
+    appId: ""
+};
+
+//the youtube api key
+export const key = ""
+
+</pre>
+
+#### Then run 'npm i' and then follow rest of the default react app instructions
+
+
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
